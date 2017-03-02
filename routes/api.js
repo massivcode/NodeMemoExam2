@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var MemberDAO = require('../models/MemberDAO');
+var auth = require('../auth/auth');
 
 /* GET api listing. */
 router.post('/member/check', function (req, res) {
@@ -68,11 +69,11 @@ router.post('/member/login', function (req, res) {
             return res.status(500).json({error: "DB 작업 중 에러가 발생습니다!"});
         }
 
-        if (result) {
-            return res.status(200).send();
-        } else {
+        if (!result) {
             return res.status(400).send();
         }
+
+        return res.status(200).append('x-auth-token', auth.generateToken(email)).send();
     })
 });
 
